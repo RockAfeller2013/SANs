@@ -33,11 +33,6 @@ def try_int(filename):
 def generate_html(videos):
     dirs = sorted(videos.keys(), key=lambda x: x.lower())
 
-    # Escape JS strings (simple)
-    def js_escape(s):
-        return s.replace('\\','\\\\').replace('"','\\"').replace("'", "\\'")
-
-    # Build directory list JS array
     dirs_js = json.dumps(dirs)
     videos_js = json.dumps(videos)
 
@@ -57,6 +52,7 @@ def generate_html(videos):
   video {{ width: 100%; max-height: 70vh; background: black; }}
   #controls {{ margin-top: 10px; }}
   button {{ padding: 8px 16px; margin-right: 10px; font-size: 16px; cursor: pointer; }}
+  #speedControl {{ margin-top: 10px; }}
 </style>
 </head>
 <body>
@@ -70,6 +66,18 @@ def generate_html(videos):
       <button id="prevBtn">Previous</button>
       <button id="nextBtn">Next</button>
     </div>
+    <div id="speedControl" style="display:none;">
+      Playback speed:
+      <select id="speedSelect">
+        <option value="0.25">0.25x</option>
+        <option value="0.5">0.5x</option>
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1x (Normal)</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+    </div>
   </div>
 
 <script>
@@ -81,6 +89,8 @@ def generate_html(videos):
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const controls = document.getElementById('controls');
+  const speedControl = document.getElementById('speedControl');
+  const speedSelect = document.getElementById('speedSelect');
 
   let currentDir = null;
   let currentIndex = 0;
@@ -103,10 +113,12 @@ def generate_html(videos):
       videoTitle.textContent = 'No videos in this directory.';
       videoPlayer.style.display = 'none';
       controls.style.display = 'none';
+      speedControl.style.display = 'none';
       return;
     }}
     videoPlayer.style.display = 'block';
     controls.style.display = 'block';
+    speedControl.style.display = 'block';
     playVideo(currentIndex);
   }}
 
@@ -118,6 +130,7 @@ def generate_html(videos):
     const src = currentDir ? (currentDir + '/' + videoFiles[index]) : videoFiles[index];
     videoPlayer.src = src;
     videoTitle.textContent = (currentDir || 'Root') + ' / ' + videoFiles[index];
+    videoPlayer.playbackRate = parseFloat(speedSelect.value);
     videoPlayer.play();
   }}
 
@@ -137,6 +150,10 @@ def generate_html(videos):
     if (currentIndex < videos[currentDir].length - 1) {{
       playVideo(currentIndex + 1);
     }}
+  }};
+
+  speedSelect.onchange = () => {{
+    videoPlayer.playbackRate = parseFloat(speedSelect.value);
   }};
 
   // Build directory list UI
