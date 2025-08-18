@@ -7,3 +7,5 @@ wget --wait=1 --recursive --no-parent --continue --tries=0 --timeout=30 --read-t
 
 wget --limit-rate=500k --wait=1 --recursive --no-parent --continue --tries=0 --timeout=30 --read-timeout=30 'https://dl.liangroup.net/SANS/SANS%20-%20FOR508%20-%20Advanced%20Incident%20Response%2C%20Threat%20Hunting%2C%20and%20Digital%20Forensics/'
 wget --continue ... https://dl.liangroup.net/SANS/
+
+https://docling-project.github.io/docling/#ibm-open-source-ai
